@@ -6,28 +6,28 @@ const GENERATED_NUMBER_UPPER_LIMIT: i32 = 100;
 const GENERATED_NUMBER_LOWER_LIMIT: i32 = 1;
 
 fn main() {
-    let generated_number: i32 = initialize_guessing_game();
+    print_welcome_message();
+
+    let generated_number: i32 = generate_random_number();
 
     run_guessing_game_loop(generated_number);
 }
 
 /// This function prints the game instructions to the user
-/// And randomly generates a number between 1-100 for the user to guess
-///
-/// # Returns
-///
-/// The generated number for the user to guess
-fn initialize_guessing_game() -> i32 {
+fn print_welcome_message() {
     println!(
         "Welcome To Guess The Number!\n You Should enter a number between {}-{}",
         GENERATED_NUMBER_LOWER_LIMIT, GENERATED_NUMBER_UPPER_LIMIT
     );
+}
 
-    let mut rng = rng();
-    let generated_number =
-        rng.random_range(GENERATED_NUMBER_LOWER_LIMIT..=GENERATED_NUMBER_UPPER_LIMIT);
-
-    return generated_number;
+/// This function randomly generates a number between 1-100 for the user to guess
+///
+/// # Returns
+///
+/// The generated number for the user to guess
+fn generate_random_number() -> i32 {
+    return rng().random_range(GENERATED_NUMBER_LOWER_LIMIT..=GENERATED_NUMBER_UPPER_LIMIT);
 }
 
 /// This function runs the main loop of the guessing game
@@ -68,22 +68,22 @@ fn receive_user_guess() -> Option<i32> {
     let mut user_input = String::new();
     io::stdin()
         .read_line(&mut user_input)
-        .expect("Failed to read line");
+        .expect("Failed to read line from standard input, Please check your Termimal");
 
     // Validate the user input
     let guess: Option<i32> = match user_input.trim().parse() {
-        Ok(converted_input) => {
-            if converted_input < GENERATED_NUMBER_LOWER_LIMIT
-                || converted_input > GENERATED_NUMBER_UPPER_LIMIT
-            {
-                println!(
-                    "Please enter a number between {}-{}",
-                    GENERATED_NUMBER_LOWER_LIMIT, GENERATED_NUMBER_UPPER_LIMIT
-                );
-                None
-            } else {
-                Some(converted_input)
-            }
+        Ok(converted_input)
+            if (GENERATED_NUMBER_LOWER_LIMIT..=GENERATED_NUMBER_UPPER_LIMIT)
+                .contains(&converted_input) =>
+        {
+            Some(converted_input)
+        }
+        Ok(_) => {
+            println!(
+                "Please enter a number between {}-{}",
+                GENERATED_NUMBER_LOWER_LIMIT, GENERATED_NUMBER_UPPER_LIMIT
+            );
+            None
         }
         Err(_) => {
             println!("Invalid Input! Please enter a number");
